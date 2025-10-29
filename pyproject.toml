@@ -2,7 +2,7 @@
 name = "speciestrack"
 version = "0.1.0"
 description = "Native and invasive species tracking"
-authors = [{ name = "Jacqui Manzi", email = "jacquimanzi@gmail.com"}]
+authors = [{ name = "Jacqui Manzi"}]
 dependencies = ["requests"]
 
 [build-system]
