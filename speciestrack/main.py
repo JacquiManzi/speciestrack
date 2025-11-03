@@ -1,5 +1,5 @@
 from flask import Flask
-from speciestrack.controllers.map_controller import show_map
+from speciestrack.controllers.map_controller import get_gbif_data
 
 app = Flask(__name__)
 
@@ -10,8 +10,8 @@ def hello_world():
 
 
 @app.route("/map")
-def map_page():
-    return show_map()
+def gbif_data():
+    return get_gbif_data()
 
 
 if __name__ == "__main__":

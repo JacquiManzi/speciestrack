@@ -20,7 +20,7 @@ def simplify_polygon(coordinates, max_points=100):
     step = len(coordinates) // max_points
 
     # Keep every nth point, but always keep first and last
-    simplified = coordinates[:step]
+    simplified = coordinates[::step]
 
     # Ensure first and last points are included
     if simplified[0] != coordinates[0]:
