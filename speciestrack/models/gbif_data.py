@@ -12,6 +12,7 @@ class GbifData(db.Model):
 
     # Observation data
     scientific_name = Column(String(500), nullable=False)
+    common_name = Column(String(255))
     observation_count = Column(Integer, default=1)
     observation_type = Column(String(100))
     native = Column(Boolean, default=False)
@@ -29,6 +30,7 @@ class GbifData(db.Model):
         return {
             'id': self.id,
             'scientific_name': self.scientific_name,
+            'common_name': self.common_name,
             'observation_count': self.observation_count,
             'observation_type': self.observation_type,
             'native': self.native,

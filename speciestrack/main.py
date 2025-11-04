@@ -1,6 +1,6 @@
 from flask import Flask
 from speciestrack.controllers.map_controller import get_native_plants
-from speciestrack.models import db
+from speciestrack.models import db, NativePlant, GbifData
 from speciestrack.jobs.gbif_job import store_gbif_data
 from apscheduler.schedulers.background import BackgroundScheduler
 import os
