@@ -3,6 +3,12 @@
 Script to manually run the GBIF data fetch and store job.
 """
 
+import sys
+from pathlib import Path
+
+# Add parent directory to path so we can import speciestrack
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
 from speciestrack.main import app
 from speciestrack.jobs.gbif_job import store_gbif_data
 

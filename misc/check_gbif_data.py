@@ -3,6 +3,12 @@
 Script to check GBIF data in the database.
 """
 
+import sys
+from pathlib import Path
+
+# Add parent directory to path so we can import speciestrack
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
 from speciestrack.main import app
 from speciestrack.models import GbifData
 from sqlalchemy import func

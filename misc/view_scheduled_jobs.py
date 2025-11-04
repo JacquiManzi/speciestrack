@@ -3,6 +3,12 @@
 View all scheduled jobs and their next run times
 """
 
+import sys
+from pathlib import Path
+
+# Add parent directory to path so we can import speciestrack
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
 from speciestrack.main import app, scheduler
 from datetime import datetime
 

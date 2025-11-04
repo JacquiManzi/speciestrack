@@ -4,6 +4,10 @@ CREATE TABLE IF NOT EXISTS gbif_data (
     scientific_name VARCHAR(500) NOT NULL,
     observation_count INTEGER DEFAULT 1,
     observation_type VARCHAR(100),
+    common_name VARCHAR(255),
+    native BOOLEAN DEFAULT FALSE,
+    decimal_latitude NUMERIC(10, 8),
+    decimal_longitude NUMERIC(11, 8),
     fetch_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

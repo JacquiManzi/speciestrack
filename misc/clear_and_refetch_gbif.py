@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Script to clear all GBIF data from the database.
+Script to clear GBIF data and re-fetch with coordinates.
 """
 
 import sys
@@ -11,21 +11,27 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from speciestrack.main import app
 from speciestrack.models import GbifData, db
+from speciestrack.jobs.gbif_job import store_gbif_data
 
 print("=" * 60)
-print("Clearing GBIF Data")
+print("Clearing and Re-fetching GBIF Data")
 print("=" * 60)
 
 with app.app_context():
+    # Clear existing data
     count_before = GbifData.query.count()
     print(f"\nRecords before deletion: {count_before}")
 
-    # Delete all records
     GbifData.query.delete()
     db.session.commit()
 
-    count_after = GbifData.query.count()
-    print(f"Records after deletion: {count_after}")
+    print(f"Records deleted: {count_before}")
+    print("\n" + "=" * 60)
+
+# Re-fetch data with coordinates
+print("Fetching new data...")
+print("=" * 60)
+store_gbif_data(app)
 
 print("\n" + "=" * 60)
 print("Done!")

@@ -3,6 +3,12 @@
 Script to verify database tables and their structure.
 """
 
+import sys
+from pathlib import Path
+
+# Add parent directory to path so we can import speciestrack
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
 from speciestrack.main import app, db
 from sqlalchemy import inspect
 
