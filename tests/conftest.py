@@ -61,25 +61,33 @@ def gbif_sample_data(db):
         scientific_name="Quercus lobata",
         observation_count=5,
         observation_type="specimen",
-        native=True
+        native=True,
+        decimal_latitude=37.9187,
+        decimal_longitude=-122.3244
     )
     native_plant2 = GbifData(
         scientific_name="Aesculus californica",
         observation_count=3,
         observation_type="observation",
-        native=True
+        native=True,
+        decimal_latitude=37.9250,
+        decimal_longitude=-122.2800
     )
     native_plant3 = GbifData(
         scientific_name="Arctostaphylos glauca",
         observation_count=7,
         observation_type="observation",
-        native=True
+        native=True,
+        decimal_latitude=37.9300,
+        decimal_longitude=-122.2900
     )
     non_native_plant = GbifData(
         scientific_name="Eucalyptus globulus",
         observation_count=2,
         observation_type="specimen",
-        native=False
+        native=False,
+        decimal_latitude=37.9400,
+        decimal_longitude=-122.3000
     )
 
     db.session.add_all([native_plant1, native_plant2, native_plant3, non_native_plant])
