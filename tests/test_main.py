@@ -1,13 +1,6 @@
+"""Tests for main Flask application routes."""
+
 import pytest
-from speciestrack.main import app
-
-
-@pytest.fixture
-def client():
-    """Create a test client for the Flask app."""
-    app.config["TESTING"] = True
-    with app.test_client() as client:
-        yield client
 
 
 def test_hello_world(client):
@@ -29,30 +22,86 @@ def test_404_error(client):
     assert response.status_code == 404
 
 
-def test_map_route_exists(client):
-    """Test that the /map route exists and returns 200."""
-    response = client.get("/map")
+def test_native_plants_route_exists(client):
+    """Test that the /native-plants route exists and returns 200."""
+    response = client.get("/native-plants")
     assert response.status_code == 200
 
 
-def test_map_route_content(client):
-    """Test that the /map route returns expected content."""
-    response = client.get("/map")
-    assert b"Species Map" in response.data
-    assert b"Track native and invasive species" in response.data
+def test_native_plants_returns_json(client):
+    """Test that the /native-plants route returns JSON data."""
+    response = client.get("/native-plants")
+    assert response.content_type == "application/json"
 
 
-def test_map_route_species_data(client):
-    """Test that the /map route displays species data."""
-    response = client.get("/map")
-    # Check for example species from the controller
-    assert b"Bald Eagle" in response.data
-    assert b"European Starling" in response.data
-    assert b"Red-tailed Hawk" in response.data
+def test_native_plants_empty_database(client):
+    """Test /native-plants returns empty array when no data exists."""
+    response = client.get("/native-plants")
+    data = response.get_json()
+    assert isinstance(data, list)
+    assert len(data) == 0
 
 
-def test_map_route_species_types(client):
-    """Test that the /map route displays native and invasive labels."""
-    response = client.get("/map")
-    assert b"NATIVE" in response.data
-    assert b"INVASIVE" in response.data
+def test_native_plants_with_data(client, gbif_sample_data):
+    """Test that /native-plants returns data when database has native plants."""
+    response = client.get("/native-plants")
+    data = response.get_json()
+
+    # Should return 3 native plants from gbif_sample_data fixture
+    assert len(data) == 3
+    assert response.content_type == "application/json"
+
+
+def test_native_plants_filters_correctly(client, gbif_sample_data):
+    """Test that /native-plants only returns plants where native=True."""
+    response = client.get("/native-plants")
+    data = response.get_json()
+
+    # Should return 3 native plants (Eucalyptus should be excluded)
+    assert len(data) == 3
+
+    # All returned plants should have native=True
+    for plant in data:
+        assert plant["native"] is True
+
+    # Check specific plant names
+    plant_names = [plant["scientific_name"] for plant in data]
+    assert "Quercus lobata" in plant_names
+    assert "Aesculus californica" in plant_names
+    assert "Arctostaphylos glauca" in plant_names
+    assert "Eucalyptus globulus" not in plant_names
+
+
+def test_native_plants_json_structure(client, gbif_sample_data):
+    """Test that /native-plants returns properly structured JSON."""
+    response = client.get("/native-plants")
+    data = response.get_json()
+
+    # Check that we have data
+    assert len(data) > 0
+
+    # Check structure of first plant
+    first_plant = data[0]
+    assert "id" in first_plant
+    assert "scientific_name" in first_plant
+    assert "observation_count" in first_plant
+    assert "observation_type" in first_plant
+    assert "native" in first_plant
+    assert "fetch_date" in first_plant
+    assert "created_at" in first_plant
+    assert "updated_at" in first_plant
+
+
+def test_native_plants_observation_counts(client, gbif_sample_data):
+    """Test that observation counts are correctly returned."""
+    response = client.get("/native-plants")
+    data = response.get_json()
+
+    # Find specific plants and check their counts
+    for plant in data:
+        if plant["scientific_name"] == "Quercus lobata":
+            assert plant["observation_count"] == 5
+        elif plant["scientific_name"] == "Aesculus californica":
+            assert plant["observation_count"] == 3
+        elif plant["scientific_name"] == "Arctostaphylos glauca":
+            assert plant["observation_count"] == 7

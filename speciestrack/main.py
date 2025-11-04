@@ -1,5 +1,5 @@
 from flask import Flask
-from speciestrack.controllers.map_controller import get_gbif_data
+from speciestrack.controllers.map_controller import get_native_plants
 from speciestrack.models import db
 from speciestrack.jobs.gbif_job import store_gbif_data
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -39,10 +39,9 @@ atexit.register(lambda: scheduler.shutdown())
 def hello_world():
     return "Hello World"
 
-
-@app.route("/map")
-def gbif_data():
-    return get_gbif_data()
+@app.route("/native-plants")
+def native_plants():
+    return get_native_plants()
 
 
 if __name__ == "__main__":
