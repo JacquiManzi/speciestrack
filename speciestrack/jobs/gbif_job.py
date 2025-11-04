@@ -4,7 +4,7 @@ Scheduled job to fetch and store GBIF data daily
 
 from datetime import datetime
 from dotenv import load_dotenv
-from speciestrack.models import db, GbifData
+from speciestrack.models import db, GbifData, NativePlant
 from speciestrack.utils.date_utils import get_date_json
 import requests
 import os
@@ -111,18 +111,45 @@ def store_gbif_data(app):
 
             # Store each observation in the database
             stored_count = 0
+            native_count = 0
             fetch_time = datetime.now()
 
             for item in species_data:
                 try:
+                    scientific_name = item.get("name", "")
+
+                    # Check if this species is in the native_plants table
+                    # GBIF includes author names (e.g. "Artemisia californica Less.")
+                    # while native_plants table has just the species name
+                    # We check if the GBIF name starts with any botanical_name from native_plants
+
+                    # First try exact match
+                    is_native = NativePlant.query.filter_by(botanical_name=scientific_name).first() is not None
+
+                    # If no exact match, check if GBIF name starts with a native plant name + space
+                    # This handles the case where GBIF has "Species name Author" and we have "Species name"
+                    if not is_native:
+                        # Extract just genus and species (first two words) from GBIF name
+                        words = scientific_name.split()
+                        if len(words) >= 2:
+                            genus_species = f"{words[0]} {words[1]}"
+                            is_native = NativePlant.query.filter(
+                                NativePlant.botanical_name.like(f"{genus_species}%")
+                            ).first() is not None
+
                     gbif_entry = GbifData(
-                        scientific_name=item.get("name", ""),
+                        scientific_name=scientific_name,
                         observation_count=item.get("count", 1),
                         observation_type=item.get("type", ""),
+                        native=is_native,
                         fetch_date=fetch_time
                     )
                     db.session.add(gbif_entry)
                     stored_count += 1
+
+                    if is_native:
+                        native_count += 1
+
                 except Exception as e:
                     print(f"Error storing entry for {item.get('name')}: {e}")
                     continue
@@ -130,6 +157,7 @@ def store_gbif_data(app):
             # Commit all entries
             db.session.commit()
             print(f"[{datetime.now()}] Successfully stored {stored_count} GBIF observations")
+            print(f"[{datetime.now()}] Native plants found: {native_count} ({native_count/stored_count*100:.1f}%)")
 
         except Exception as e:
             print(f"Error in GBIF data job: {e}")

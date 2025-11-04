@@ -21,17 +21,34 @@ with app.app_context():
 
     # Count total entries
     total_count = GbifData.query.count()
+    native_count = GbifData.query.filter_by(native=True).count()
     print(f"   Total GBIF observations in database: {total_count}")
+
+    if total_count > 0:
+        print(f"   Native plants: {native_count} ({native_count/total_count*100:.1f}%)")
+        print(f"   Non-native: {total_count - native_count} ({(total_count-native_count)/total_count*100:.1f}%)")
+    else:
+        print("   No observations to analyze")
 
     # Get latest entries
     latest_entries = GbifData.query.order_by(GbifData.fetch_date.desc()).limit(10).all()
 
     print("\n3. Latest 10 observations:")
     for entry in latest_entries:
-        print(f"   - {entry.scientific_name} (count: {entry.observation_count}, fetched: {entry.fetch_date})")
+        native_status = "NATIVE" if entry.native else "non-native"
+        print(f"   - {entry.scientific_name} [{native_status}] (count: {entry.observation_count})")
+
+    # Show native plants
+    print("\n4. Native plants observed (first 10):")
+    native_plants = GbifData.query.filter_by(native=True).limit(10).all()
+    if native_plants:
+        for plant in native_plants:
+            print(f"   - {plant.scientific_name}")
+    else:
+        print("   No native plants found in observations")
 
     # Group by fetch date
-    print("\n4. Observations by fetch date:")
+    print("\n5. Observations by fetch date:")
     from sqlalchemy import func
     date_counts = GbifData.query.with_entities(
         func.date(GbifData.fetch_date).label('date'),
