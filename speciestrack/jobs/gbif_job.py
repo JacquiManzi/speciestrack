@@ -75,7 +75,8 @@ def fetch_gbif_data_raw():
                             "type": "",
                             "count": 1,
                             "latitude": item.get("decimalLatitude"),
-                            "longitude": item.get("decimalLongitude")
+                            "longitude": item.get("decimalLongitude"),
+                            "occurrence_id": item.get("key")  # GBIF occurrence key/ID
                         })
                         page_count += 1
 
@@ -152,6 +153,7 @@ def store_gbif_data(app):
                     gbif_entry = GbifData(
                         scientific_name=scientific_name,
                         common_name=common_name,
+                        occurrence_id=item.get("occurrence_id"),
                         observation_count=item.get("count", 1),
                         observation_type=item.get("type", ""),
                         native=is_native,

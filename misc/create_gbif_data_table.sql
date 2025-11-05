@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS gbif_data (
     observation_type VARCHAR(100),
     common_name VARCHAR(255),
     native BOOLEAN DEFAULT FALSE,
+    occurrence_id VARCHAR(500),
     decimal_latitude NUMERIC(10, 8),
     decimal_longitude NUMERIC(11, 8),
     fetch_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

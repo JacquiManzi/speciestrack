@@ -1,4 +1,5 @@
 from flask import Flask
+from flask_cors import CORS
 from speciestrack.controllers.map_controller import get_native_plants
 from speciestrack.models import db, NativePlant, GbifData
 from speciestrack.jobs.gbif_job import store_gbif_data
@@ -7,6 +8,9 @@ import os
 import atexit
 
 app = Flask(__name__)
+
+# Enable CORS for all routes
+CORS(app, origins=['http://localhost:8081'])
 
 # Database configuration
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv(

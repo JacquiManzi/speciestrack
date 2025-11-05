@@ -59,6 +59,7 @@ def gbif_sample_data(db):
     """
     native_plant1 = GbifData(
         scientific_name="Quercus lobata",
+        occurrence_id="4055379494",
         observation_count=5,
         observation_type="specimen",
         native=True,
@@ -67,6 +68,7 @@ def gbif_sample_data(db):
     )
     native_plant2 = GbifData(
         scientific_name="Aesculus californica",
+        occurrence_id="4055379495",
         observation_count=3,
         observation_type="observation",
         native=True,
@@ -75,6 +77,7 @@ def gbif_sample_data(db):
     )
     native_plant3 = GbifData(
         scientific_name="Arctostaphylos glauca",
+        occurrence_id="4055379496",
         observation_count=7,
         observation_type="observation",
         native=True,
@@ -83,6 +86,7 @@ def gbif_sample_data(db):
     )
     non_native_plant = GbifData(
         scientific_name="Eucalyptus globulus",
+        occurrence_id="4055379497",
         observation_count=2,
         observation_type="specimen",
         native=False,
