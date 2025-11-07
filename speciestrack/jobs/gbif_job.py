@@ -76,7 +76,8 @@ def fetch_gbif_data_raw():
                             "count": 1,
                             "latitude": item.get("decimalLatitude"),
                             "longitude": item.get("decimalLongitude"),
-                            "occurrence_id": item.get("key")  # GBIF occurrence key/ID
+                            "occurrence_id": item.get("key"),  # GBIF occurrence key/ID
+                            "event_date": item.get("eventDate")  # Date when observation occurred
                         })
                         page_count += 1
 
@@ -150,6 +151,14 @@ def store_gbif_data(app):
                     is_native = native_plant is not None
                     common_name = native_plant.common_name if native_plant is not None else None
 
+                    # Parse event_date if present
+                    event_date = None
+                    if item.get("event_date"):
+                        try:
+                            event_date = datetime.fromisoformat(item.get("event_date").replace('Z', '+00:00'))
+                        except (ValueError, AttributeError):
+                            event_date = None
+
                     gbif_entry = GbifData(
                         scientific_name=scientific_name,
                         common_name=common_name,
@@ -159,6 +168,7 @@ def store_gbif_data(app):
                         native=is_native,
                         decimal_latitude=item.get("latitude"),
                         decimal_longitude=item.get("longitude"),
+                        event_date=event_date,
                         fetch_date=fetch_time
                     )
                     db.session.add(gbif_entry)

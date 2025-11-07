@@ -57,6 +57,8 @@ def gbif_sample_data(db):
     Create sample GBIF data for testing.
     Returns a list of created GbifData objects.
     """
+    from datetime import datetime
+
     native_plant1 = GbifData(
         scientific_name="Quercus lobata",
         occurrence_id="4055379494",
@@ -64,7 +66,8 @@ def gbif_sample_data(db):
         observation_type="specimen",
         native=True,
         decimal_latitude=37.9187,
-        decimal_longitude=-122.3244
+        decimal_longitude=-122.3244,
+        event_date=datetime(2025, 3, 15, 10, 30)
     )
     native_plant2 = GbifData(
         scientific_name="Aesculus californica",
@@ -73,7 +76,8 @@ def gbif_sample_data(db):
         observation_type="observation",
         native=True,
         decimal_latitude=37.9250,
-        decimal_longitude=-122.2800
+        decimal_longitude=-122.2800,
+        event_date=datetime(2025, 4, 20, 14, 15)
     )
     native_plant3 = GbifData(
         scientific_name="Arctostaphylos glauca",
@@ -82,7 +86,8 @@ def gbif_sample_data(db):
         observation_type="observation",
         native=True,
         decimal_latitude=37.9300,
-        decimal_longitude=-122.2900
+        decimal_longitude=-122.2900,
+        event_date=datetime(2025, 5, 10, 9, 0)
     )
     non_native_plant = GbifData(
         scientific_name="Eucalyptus globulus",
@@ -91,7 +96,8 @@ def gbif_sample_data(db):
         observation_type="specimen",
         native=False,
         decimal_latitude=37.9400,
-        decimal_longitude=-122.3000
+        decimal_longitude=-122.3000,
+        event_date=datetime(2025, 6, 5, 16, 45)
     )
 
     db.session.add_all([native_plant1, native_plant2, native_plant3, non_native_plant])
